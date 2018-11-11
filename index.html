@@ -39,27 +39,42 @@
     () =>  {
       let pickedExpressionImage = `${Math.floor(Math.random() * 8) + 1}.jpg`
       document.getElementById("expression").src = `./files/${pickedExpressionImage}`
-      stepsHistory.push(pickedExpressionImage);
+      stepsHistory.push({ pickedExpressionImage });
     },
     1000
   )
 
-  const evaluateNBackStep = () => 
-    stepsHistory[stepsHistory.length - 1 - nBackLevel] ===
-    stepsHistory[stepsHistory.length - 1];
+  const getActualStepIndex = () => stepsHistory.length - 1;
+
+
+  const evaluateNBackStep = () => {
+    const actualStepIndex = getActualStepIndex();
+    console.log(stepsHistory);
+    return stepsHistory[actualStepIndex - nBackLevel].pickedExpressionImage ===
+    stepsHistory[actualStepIndex].pickedExpressionImage;
+  }
 
 
 
   // Sensing key.
   document.onkeypress = ({ key }) => {
-    key === " " && console.log(evaluateNBackStep());
+    const actualStepIndex = getActualStepIndex();
+    // Evaluate if key was pressed at matching expression.
+    key === " " && !stepsHistory[actualStepIndex].evaluation && (() => {
+      const evaluation = evaluateNBackStep();
+      
+      // Storing score.
+      stepsHistory[actualStepIndex] = { ...stepsHistory[actualStepIndex], evaluation };
+      console.log(stepsHistory);
+    })()
+    
   }
 
 
 
-  // Evaluate if key was pressed at matching expression.
 
-  // Storing score.
+
+  
 
   // End the game after the certain number of repetion.
 
