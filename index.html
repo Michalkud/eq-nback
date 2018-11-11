@@ -33,13 +33,18 @@
   // Tracking history of faces expressions in time.
   const stepsHistory = [];
   var nBackLevel = 2;
+  var numberOfStepsToGameEnd = 10;
+  var gameInterval;
 
   // Changing images of expressions
-  setInterval(
+  var gameInterval = setInterval(
     () =>  {
       let pickedExpressionImage = `${Math.floor(Math.random() * 8) + 1}.jpg`
       document.getElementById("expression").src = `./files/${pickedExpressionImage}`
       stepsHistory.push({ pickedExpressionImage });
+      // End the game after the certain number of repetion.
+      numberOfStepsToGameEnd--;
+      if (numberOfStepsToGameEnd === 0 ) clearInterval(gameInterval);
     },
     1000
   )
@@ -76,7 +81,6 @@
 
   
 
-  // End the game after the certain number of repetion.
 
   // Save the data about success rate.
 
