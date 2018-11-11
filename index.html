@@ -34,6 +34,7 @@
     Games success rate:
     <table id="gamesSuccessRate">
       <tr>
+        <th>Number of game:</th>
         <th>N-back level:</th>
         <th>Delay between steps:</th>
         <th>Number of steps in game:</th>
@@ -85,9 +86,12 @@
     gamesHistory.length > 0 && (() => {
       var table = document.getElementById("gamesSuccessRate");
 
-      gamesHistory.forEach(game => {
+      gamesHistory.forEach((game, i) => {
         const succesRate = getGameSuccessRate(game);
         let row = document.createElement("tr");
+        let numberOfGameColumn = document.createElement("td").appendChild(document.createTextNode(i));
+
+        row.appendChild(numberOfGameColumn);
         
         Object.keys(game).forEach((key) => {
           let column = document.createElement("td");
