@@ -18,6 +18,8 @@
 </body>
 
 <script>
+
+  
   // const expressionImageSrc = document.getElementById("expression").src;
   // console.log(expressionImageSrc);
 
@@ -28,21 +30,32 @@
    *
    */
 
-
-
+  // Tracking history of faces expressions in time.
+  const stepsHistory = [];
+  var nBackLevel = 2;
 
   // Changing images of expressions
   setInterval(
     () =>  {
-      document.getElementById("expression").src = `./files/${Math.floor(Math.random() * 8) + 1}.jpg`
-      console.log('here');
+      let pickedExpressionImage = `${Math.floor(Math.random() * 8) + 1}.jpg`
+      document.getElementById("expression").src = `./files/${pickedExpressionImage}`
+      stepsHistory.push(pickedExpressionImage);
     },
     1000
   )
 
-  // Tracking history of faces expressions in time.
+  const evaluateNBackStep = () => 
+    stepsHistory[stepsHistory.length - 1 - nBackLevel] ===
+    stepsHistory[stepsHistory.length - 1];
+
+
 
   // Sensing key.
+  document.onkeypress = ({ key }) => {
+    key === " " && console.log(evaluateNBackStep());
+  }
+
+
 
   // Evaluate if key was pressed at matching expression.
 
