@@ -115,7 +115,7 @@
     )
 
     if (numberOfUnsuccesfullTurns === 0) return '100 %';
-    return `${((numberOfSuccessfullTurns / numberOfUnsuccesfullTurns) * 100) / 2} %`;
+    return `${((numberOfSuccessfullTurns / (numberOfSuccessfullTurns + numberOfUnsuccesfullTurns) ) * 100) } %`;
   }
 
   setView(beforeGameScreen);
@@ -141,8 +141,9 @@
         }
 
         let pickedExpressionImage = `${Math.floor(Math.random() * 8) + 1}.jpg`
-
-        document.getElementById("expression").src = `./files/${pickedExpressionImage}`
+        document.getElementById("expression").src = ``;
+        setTimeout(() =>
+          document.getElementById("expression").src = `./files/${pickedExpressionImage}`, 50);
         stepsHistory.push({ pickedExpressionImage });
         // End the game after the certain number of repetion.
         actualNumberOfStepsToGameEnd--;
