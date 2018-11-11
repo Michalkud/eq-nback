@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>EQ nback</title>
+</head>
+
+<body>
+  <img 
+    id="expression"
+    src="./files/1.jpg" 
+    alt="Expression" 
+    style"
+      display:block;
+      text-align:center;
+      "
+  >
+</body>
+
+<script>
+  // const expressionImageSrc = document.getElementById("expression").src;
+  // console.log(expressionImageSrc);
+
+  /** Emotinal n back consists of:
+   *  nBackLevel - Number of steps to past the person playing game must remember
+   *  delayBetweenSteps - Delay between steps in milliseconds
+   *  numberOfStepsOnGame - number of steps which one game consists of
+   *
+   */
+
+
+
+
+  // Changing images of expressions
+  setInterval(
+    () =>  {
+      document.getElementById("expression").src = `./files/${Math.floor(Math.random() * 8) + 1}.jpg`
+      console.log('here');
+    },
+    1000
+  )
+
+  // Tracking history of faces expressions in time.
+
+  // Sensing key.
+
+  // Evaluate if key was pressed at matching expression.
+
+  // Storing score.
+
+  // End the game after the certain number of repetion.
+
+  // Save the data about success rate.
+
+</script>
+
+</html>
