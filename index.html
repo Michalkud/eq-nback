@@ -86,7 +86,7 @@
   const getGameSuccessRate = (game) => {
     let numberOfSuccessfullTurns = 0;
     let numberOfUnsuccesfullTurns = 0;
-    game.forEach(({ evaluation }) => 
+    game.history.forEach(({ evaluation }) => 
         (evaluation !== "undefined" && 
           (evaluation === true && numberOfSuccessfullTurns++) || 
           (evaluation === false && numberOfUnsuccesfullTurns++)
@@ -102,7 +102,6 @@
 
   const startGame = () => {
     var actualNumberOfStepsToGameEnd = numberOfStepsToGameEnd;
-    stepsHistory = [];
     setView(gameScreen);
     // Changing images of expressions
     var gameInterval = setInterval(
@@ -115,7 +114,12 @@
         if (actualNumberOfStepsToGameEnd === 0 ) {
           clearInterval(gameInterval);
           // Save the data about success rate.
-          gamesHistory.push(stepsHistory);
+          gamesHistory.push({
+            nBackLevel,
+            delayBetweenSteps,
+            numberOfStepsInGame: numberOfStepsToGameEnd,
+            history: stepsHistory
+          });
           setView(beforeGameScreen);
           setGamesSuccessRate();
           
