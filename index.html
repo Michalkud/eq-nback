@@ -16,7 +16,7 @@
  *  Before game screen
  *    Info about n back level [done]
  *    Play button [done]
- *    Statistics from previous game
+ *    Statistics from previous games in list
  *    Custom settings [partially]
  *
  *  Game screen
@@ -26,8 +26,8 @@
   const beforeGameScreen = `<div>
     N-back level:  <input type="number" id="nBackLevel" value="2" /><button onclick="setNbackLevel()">Set it</button></br>
     <button onclick="startGame()">Play</button><br />
-    Last game success rate:
-    <div id="lastGameSuccessRate" />
+    Games success rate:
+    <ul id="gamesSuccessRate" />
   </div>`;
 
   const gameScreen = `<img 
@@ -54,7 +54,7 @@
   // Tracking history of faces expressions in time.
   var stepsHistory = [];
   const gamesHistory = [];
-  var delayBetweenSteps = 2000;
+  var delayBetweenSteps = 1500;
   var nBackLevel = 2;
   var numberOfStepsToGameEnd = 10;
   var gameInterval;
@@ -69,23 +69,32 @@
     document.getElementById("view").innerHTML = screen;
   }
 
-  const setLastGameSuccessRate = () => {
+  const setGamesSuccessRate = () => {
     console.log('here', gamesHistory.length);
     gamesHistory.length > 0 && (() => {
-      const lastGameSteps = gamesHistory[gamesHistory.length - 1];
-      let numberOfSuccessfullTurns = 0;
-      let numberOfUnsuccesfullTurns = 0;
-      
-      lastGameSteps.forEach(({ evaluation }) => 
+      var ul = document.getElementById("gamesSuccessRate");
+
+      gamesHistory.forEach(game => {
+        const succesRate = getGameSuccessRate(game);
+        let li = document.createElement("li");
+        li.appendChild(document.createTextNode(succesRate));
+        ul.appendChild(li);
+      });
+    })();
+  }
+
+  const getGameSuccessRate = (game) => {
+    let numberOfSuccessfullTurns = 0;
+    let numberOfUnsuccesfullTurns = 0;
+    game.forEach(({ evaluation }) => 
         (evaluation !== "undefined" && 
           (evaluation === true && numberOfSuccessfullTurns++) || 
           (evaluation === false && numberOfUnsuccesfullTurns++)
         )
-      )
-      console.log(numberOfSuccessfullTurns, numberOfUnsuccesfullTurns);
-      document.getElementById("lastGameSuccessRate").innerHTML = `${((numberOfSuccessfullTurns / numberOfUnsuccesfullTurns) * 100) / 2} %`;
+    )
 
-    })();
+    if (numberOfUnsuccesfullTurns === 0) return '100 %';
+    return `${((numberOfSuccessfullTurns / numberOfUnsuccesfullTurns) * 100) / 2} %`;
   }
 
   setView(beforeGameScreen);
@@ -108,7 +117,7 @@
           // Save the data about success rate.
           gamesHistory.push(stepsHistory);
           setView(beforeGameScreen);
-          setLastGameSuccessRate();
+          setGamesSuccessRate();
           
         }
       },
@@ -132,8 +141,10 @@
   document.onkeypress = ({ key }) => {
     const actualStepIndex = getActualStepIndex();
     // Evaluate if key was pressed at matching expression.
-    console.log(stepsHistory[actualStepIndex].evaluation);
-    key === " " && (typeof stepsHistory[actualStepIndex].evaluation === "undefined") && (() => {
+    key === " " && 
+    (typeof stepsHistory[actualStepIndex].evaluation === "undefined") && 
+    stepsHistory[actualStepIndex - nBackLevel] &&
+    (() => {
       const evaluation = evaluateNBackStep();
       
       // Storing score.
