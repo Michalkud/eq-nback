@@ -68,7 +68,7 @@
   const gamesHistory = [];
   var delayBetweenSteps = 1500;
   var nBackLevel = 2;
-  var numberOfStepsToGameEnd = 10;
+  var numberOfStepsToGameEnd = 30;
   var gameInterval;
 
   
@@ -81,8 +81,7 @@
     document.getElementById("view").innerHTML = screen;
   }
 
-  const setGamesSuccessRate = () => {
-    console.log('here', gamesHistory.length);
+  const rerenderlateGameStatisticsTable = () => {
     gamesHistory.length > 0 && (() => {
       var table = document.getElementById("gamesSuccessRate");
 
@@ -123,12 +122,26 @@
 
 
   const startGame = () => {
+    stepsHistory = [];
     var actualNumberOfStepsToGameEnd = numberOfStepsToGameEnd;
     setView(gameScreen);
     // Changing images of expressions
     var gameInterval = setInterval(
       () =>  {
+
+        //If user in previous step missed match put false to evaluation
+        const actualStepIndex = stepsHistory.length - 1;
+        if (
+          stepsHistory[actualStepIndex - nBackLevel] &&
+          stepsHistory[actualStepIndex - 1] &&
+          evaluateNBackStep() && 
+          !(stepsHistory[actualStepIndex].evaluation)
+        ) {
+          stepsHistory[actualStepIndex].evaluation = false;
+        }
+
         let pickedExpressionImage = `${Math.floor(Math.random() * 8) + 1}.jpg`
+
         document.getElementById("expression").src = `./files/${pickedExpressionImage}`
         stepsHistory.push({ pickedExpressionImage });
         // End the game after the certain number of repetion.
@@ -143,8 +156,7 @@
             history: stepsHistory
           });
           setView(beforeGameScreen);
-          setGamesSuccessRate();
-          
+          rerenderlateGameStatisticsTable();
         }
       },
       delayBetweenSteps
@@ -156,7 +168,6 @@
 
   const evaluateNBackStep = () => {
     const actualStepIndex = getActualStepIndex();
-    console.log(stepsHistory);
     return stepsHistory[actualStepIndex - nBackLevel].pickedExpressionImage ===
     stepsHistory[actualStepIndex].pickedExpressionImage;
   }
@@ -175,7 +186,6 @@
       
       // Storing score.
       stepsHistory[actualStepIndex] = { ...stepsHistory[actualStepIndex], evaluation };
-      console.log(stepsHistory);
     })()
     
   }
