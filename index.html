@@ -10,7 +10,7 @@
     id="expression"
     src="./files/1.jpg" 
     alt="Expression" 
-    style"
+    style="
       display:block;
       text-align:center;
       "
@@ -32,9 +32,12 @@
 
   // Tracking history of faces expressions in time.
   const stepsHistory = [];
+  const gamesHistory = [];
+  var delayBetweenSteps = 2000;
   var nBackLevel = 2;
   var numberOfStepsToGameEnd = 10;
   var gameInterval;
+
 
   // Changing images of expressions
   var gameInterval = setInterval(
@@ -44,9 +47,13 @@
       stepsHistory.push({ pickedExpressionImage });
       // End the game after the certain number of repetion.
       numberOfStepsToGameEnd--;
-      if (numberOfStepsToGameEnd === 0 ) clearInterval(gameInterval);
+      if (numberOfStepsToGameEnd === 0 ) {
+        clearInterval(gameInterval);
+        // Save the data about success rate.
+        gamesHistory.push(stepsHistory);
+      }
     },
-    1000
+    delayBetweenSteps
   )
 
   const getActualStepIndex = () => stepsHistory.length - 1;
@@ -76,13 +83,6 @@
   }
 
 
-
-
-
-  
-
-
-  // Save the data about success rate.
 
 </script>
 
