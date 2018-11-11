@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <title>EQ nback</title>
+<style>
+    table, th, td {
+        border: 1px solid black;
+    }
+</style>
 </head>
 
 <body>
@@ -27,7 +32,14 @@
     N-back level:  <input type="number" id="nBackLevel" value="2" /><button onclick="setNbackLevel()">Set it</button></br>
     <button onclick="startGame()">Play</button><br />
     Games success rate:
-    <ul id="gamesSuccessRate" />
+    <table id="gamesSuccessRate">
+      <tr>
+        <th>N-back level:</th>
+        <th>Delay between steps:</th>
+        <th>Number of steps in game:</th>
+        <th>Success rate:</th>
+      </tr>
+    </table>
   </div>`;
 
   const gameScreen = `<img 
@@ -72,13 +84,23 @@
   const setGamesSuccessRate = () => {
     console.log('here', gamesHistory.length);
     gamesHistory.length > 0 && (() => {
-      var ul = document.getElementById("gamesSuccessRate");
+      var table = document.getElementById("gamesSuccessRate");
 
       gamesHistory.forEach(game => {
         const succesRate = getGameSuccessRate(game);
-        let li = document.createElement("li");
-        li.appendChild(document.createTextNode(succesRate));
-        ul.appendChild(li);
+        let row = document.createElement("tr");
+        
+        Object.keys(game).forEach((key) => {
+          let column = document.createElement("td");
+          if(key === 'history') {
+            column.appendChild(document.createTextNode(getGameSuccessRate(game)))
+          } else {
+            column.appendChild(document.createTextNode(game[key]))
+          }
+
+          row.appendChild(column);
+        });
+        table.appendChild(row);
       });
     })();
   }
