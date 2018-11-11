@@ -6,7 +6,30 @@
 </head>
 
 <body>
-  <img 
+  <div id="view"></div>
+</body>
+
+<script>
+
+/**
+ * Views:
+ *  Before game screen
+ *    Info about n back level [done]
+ *    Play button
+ *    Statistics from previous games
+ *    Custom settings
+ *
+ *  Game screen
+ *    Just pictures of emotions.
+ * */
+
+  const beforeGameScreen = `<div>
+    N-back level:  <input type="number" id="nBackLevel" value="2" /><button onclick="setNbackLevel()">Set it</button></br>
+    <button onclick="startGame()">Play</button>
+
+  </div>`;
+
+  const gameScreen = `<img 
     id="expression"
     src="./files/1.jpg" 
     alt="Expression" 
@@ -14,10 +37,7 @@
       display:block;
       text-align:center;
       "
-  >
-</body>
-
-<script>
+  />`;
 
   
   // const expressionImageSrc = document.getElementById("expression").src;
@@ -38,23 +58,40 @@
   var numberOfStepsToGameEnd = 10;
   var gameInterval;
 
+  
 
-  // Changing images of expressions
-  var gameInterval = setInterval(
-    () =>  {
-      let pickedExpressionImage = `${Math.floor(Math.random() * 8) + 1}.jpg`
-      document.getElementById("expression").src = `./files/${pickedExpressionImage}`
-      stepsHistory.push({ pickedExpressionImage });
-      // End the game after the certain number of repetion.
-      numberOfStepsToGameEnd--;
-      if (numberOfStepsToGameEnd === 0 ) {
-        clearInterval(gameInterval);
-        // Save the data about success rate.
-        gamesHistory.push(stepsHistory);
-      }
-    },
-    delayBetweenSteps
-  )
+  const setNbackLevel = function() {
+    nBackLevel = document.getElementById("nBackLevel").value;
+  };
+
+  const setView = function (screen) {
+    document.getElementById("view").innerHTML = screen;
+  }
+
+  setView(beforeGameScreen);
+
+
+  const startGame = () => {
+    setView(gameScreen);
+    // Changing images of expressions
+    var gameInterval = setInterval(
+      () =>  {
+        let pickedExpressionImage = `${Math.floor(Math.random() * 8) + 1}.jpg`
+        document.getElementById("expression").src = `./files/${pickedExpressionImage}`
+        stepsHistory.push({ pickedExpressionImage });
+        // End the game after the certain number of repetion.
+        numberOfStepsToGameEnd--;
+        if (numberOfStepsToGameEnd === 0 ) {
+          clearInterval(gameInterval);
+          // Save the data about success rate.
+          gamesHistory.push(stepsHistory);
+          setView(beforeGameScreen);
+          
+        }
+      },
+      delayBetweenSteps
+    )
+  }
 
   const getActualStepIndex = () => stepsHistory.length - 1;
 
