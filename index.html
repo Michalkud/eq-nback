@@ -15,18 +15,19 @@
  * Views:
  *  Before game screen
  *    Info about n back level [done]
- *    Play button
- *    Statistics from previous games
- *    Custom settings
+ *    Play button [done]
+ *    Statistics from previous game
+ *    Custom settings [partially]
  *
  *  Game screen
- *    Just pictures of emotions.
+ *    Just pictures of emotions. [done]
  * */
 
   const beforeGameScreen = `<div>
     N-back level:  <input type="number" id="nBackLevel" value="2" /><button onclick="setNbackLevel()">Set it</button></br>
-    <button onclick="startGame()">Play</button>
-
+    <button onclick="startGame()">Play</button><br />
+    Last game success rate:
+    <div id="lastGameSuccessRate" />
   </div>`;
 
   const gameScreen = `<img 
@@ -51,7 +52,7 @@
    */
 
   // Tracking history of faces expressions in time.
-  const stepsHistory = [];
+  var stepsHistory = [];
   const gamesHistory = [];
   var delayBetweenSteps = 2000;
   var nBackLevel = 2;
@@ -68,10 +69,31 @@
     document.getElementById("view").innerHTML = screen;
   }
 
+  const setLastGameSuccessRate = () => {
+    console.log('here', gamesHistory.length);
+    gamesHistory.length > 0 && (() => {
+      const lastGameSteps = gamesHistory[gamesHistory.length - 1];
+      let numberOfSuccessfullTurns = 0;
+      let numberOfUnsuccesfullTurns = 0;
+      
+      lastGameSteps.forEach(({ evaluation }) => 
+        (evaluation !== "undefined" && 
+          (evaluation === true && numberOfSuccessfullTurns++) || 
+          (evaluation === false && numberOfUnsuccesfullTurns++)
+        )
+      )
+      console.log(numberOfSuccessfullTurns, numberOfUnsuccesfullTurns);
+      document.getElementById("lastGameSuccessRate").innerHTML = `${((numberOfSuccessfullTurns / numberOfUnsuccesfullTurns) * 100) / 2} %`;
+
+    })();
+  }
+
   setView(beforeGameScreen);
 
 
   const startGame = () => {
+    var actualNumberOfStepsToGameEnd = numberOfStepsToGameEnd;
+    stepsHistory = [];
     setView(gameScreen);
     // Changing images of expressions
     var gameInterval = setInterval(
@@ -80,12 +102,13 @@
         document.getElementById("expression").src = `./files/${pickedExpressionImage}`
         stepsHistory.push({ pickedExpressionImage });
         // End the game after the certain number of repetion.
-        numberOfStepsToGameEnd--;
-        if (numberOfStepsToGameEnd === 0 ) {
+        actualNumberOfStepsToGameEnd--;
+        if (actualNumberOfStepsToGameEnd === 0 ) {
           clearInterval(gameInterval);
           // Save the data about success rate.
           gamesHistory.push(stepsHistory);
           setView(beforeGameScreen);
+          setLastGameSuccessRate();
           
         }
       },
@@ -109,7 +132,8 @@
   document.onkeypress = ({ key }) => {
     const actualStepIndex = getActualStepIndex();
     // Evaluate if key was pressed at matching expression.
-    key === " " && !stepsHistory[actualStepIndex].evaluation && (() => {
+    console.log(stepsHistory[actualStepIndex].evaluation);
+    key === " " && (typeof stepsHistory[actualStepIndex].evaluation === "undefined") && (() => {
       const evaluation = evaluateNBackStep();
       
       // Storing score.
